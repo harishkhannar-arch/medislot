@@ -14,11 +14,11 @@ import doctorRoutes from './routes/doctor.routes';
 const app = express();
 
 // Middleware
-// UPDATED CORS SECTION
+// ✅ FIXED: Added your Vercel app to the allowed list
 app.use(cors({
   origin: [
-    config.server.frontendUrl,          // Allows localhost
-    "https://medislot-ten.vercel.app"   // Allows your specific Vercel app
+    config.server.frontendUrl,          // Allows localhost (for local testing)
+    "https://medislot-ten.vercel.app"   // <--- THIS FIXES THE CORS ERROR
   ],
   credentials: true,
 }));
@@ -35,11 +35,9 @@ app.get('/health', (req: Request, res: Response) => {
 
 // Routes
 app.use('/admin', adminRoutes);
-// app.use('/doctors', doctorRoutes); // You had this twice, I removed the duplicate
 app.use('/appointments', appointmentRoutes);
-
 app.use('/clinics', clinicRoutes);
-app.use('/doctors', doctorRoutes);
+app.use('/doctors', doctorRoutes); // ✅ Only listed once now
 app.use('/slots', slotRoutes);
 
 // Error handling
@@ -47,7 +45,7 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 // Start server
-const PORT = config.server.port || 5000; // Added fallback to 5000 just in case
+const PORT = config.server.port || 5000;
 app.listen(PORT, () => {
   console.log('🚀 MediSlot Backend Server Started');
   console.log(`📌 Port: ${PORT}`);
